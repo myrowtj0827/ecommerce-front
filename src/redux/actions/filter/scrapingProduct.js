@@ -30,6 +30,7 @@ export const scrapingAllProducts = () => dispatch => {
     axios
         .get(config.SIM_API_URL + "api/scrapingProduct/scraping-product-all", )
         .then(res => {
+            
             console.log("Scraping Products -> ", res.data.results);
 
             dispatch({

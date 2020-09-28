@@ -580,8 +580,8 @@ class Home extends React.Component {
                                     return (
                                         <div className="w3-card card-bg-padding">
                                             <a href={item.scraping_store_address}><img className="img-item" key={key} src={item.scraping_photo_link} alt="" /></a>
-                                            <div className="scraping-name">{item.scraping_name}</div>
-                                            <div className="blue-txt">{item.scraping_description}</div>
+                                            <div className="scraping-name text-nowrap">{item.scraping_name}</div>
+                                            <div className="blue-txt text-nowrap">{item.scraping_description}</div>
                                             <div className="red-txt">SAR {item.scraping_price}</div>
                                         </div>
                                     )
@@ -600,8 +600,8 @@ class Home extends React.Component {
                                     return (
                                         <div className="w3-card card-bg-padding">
                                             <a href={item.scraping_store_address}><img className="img-item" key={key} src={item.scraping_photo_link} alt="" /></a>
-                                            <div className="scraping-name">{item.scraping_name}</div>
-                                            <div className="blue-txt">{item.scraping_description}</div>
+                                            <div className="scraping-name text-nowrap">{item.scraping_name}</div>
+                                            <div className="blue-txt text-nowrap">{item.scraping_description}</div>
                                             <div className="red-txt">SAR {item.scraping_price}</div>
                                         </div>
                                     )

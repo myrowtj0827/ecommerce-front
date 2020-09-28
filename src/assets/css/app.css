@@ -547,13 +547,21 @@ color: white !important;
   width: 100%;
   max-width: 250px;
   min-height: 100px;
+  max-height: 250px;
   color: rgba(255,255,255,0.7);
 
   justify-content: center;
   align-items: center;
 }
 
+.text-nowrap {
+  word-break: break-all !important;
+  white-space: unset !important;
+}
+
 .blue-txt {
+  margin: 0 auto;
+  
   padding-top: 10px;
   padding-bottom: 20px;
   font-size: 1rem;
@@ -703,6 +711,8 @@ color: white !important;
 }
 
 .scraping-name {
+  margin: 0 auto;
+  
   padding-top: 15px;
   font-size: 1.4rem;
   font-weight: bold;

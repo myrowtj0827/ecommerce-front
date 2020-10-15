@@ -1,153 +1,72 @@
 import React from 'react';
-import { connect } from "react-redux";
-import { createProduct, fetchAllProducts } from "../redux/actions/filter/filter";
+import {connect} from "react-redux";
+import {fetchAllProducts} from "../redux/actions/filter/filter";
 
-import { gettingLink, scrapingAllProducts } from "../redux/actions/filter/scrapingProduct";
+import {
+    scrapingAllProducts,
+    gettingPopularProducts,
+    getProductPage,
+} from "../redux/actions/filter/scrapingProduct";
 
-import $ from 'jquery';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
 
 class Home extends React.Component {
-
-        state = {
-            // imgStore: '',
+    constructor(props) {
+        super(props);
+        this.state = {
             categoryName: '',
-            // product_id: '',
-            // product_photo: '',
-            // product_category: '',
-            // product_name: '',
-            // product_price: '',
-            // product_description: '',
-            // product_store_logo: '',
-            // product_store_address: '',
-
             scraping_id: '',
-            scraping_store_address: '',
-            scraping_photo_link: '',
-            scraping_category: '',
-            scraping_name: '',
-            scraping_description: '',
-            scraping_price: '',
+
 
             nProduct: 0,
+            popularList: '',
+
+            page_num: '',
+            current_page: 1,
+            page_neighbours: 2,
+            pagination: 12,
+            productsList: '',
         };
-
-
-    // selectImage = (e) => {
-    //     const url = e.target.files[0];
-    //
-    //     if (url) {
-    //         const reader = new FileReader();
-    //         reader.onload = fileEvent => {
-    //             this.cropImage(fileEvent.target.result, 370)
-    //                 .then(croppedImg => {
-    //
-    //                     this.setState({
-    //                         product_photo: croppedImg,
-    //                     })
-    //                 })
-    //                 .catch(err => {
-    //                     console.log(err);
-    //                 });
-    //         };
-    //         reader.readAsDataURL(url);
-    //     }
-    // };
-    //
-    // cropImage = (url, size, key) => {
-    //     return new Promise(resolve => {
-    //         // this image will hold our source image data
-    //         const inputImage = new Image();
-    //
-    //         // we want to wait for our image to load
-    //         inputImage.onload = () => {
-    //             // let's store the width and height of our image
-    //             const minLength = Math.min(inputImage.naturalWidth, inputImage.naturalHeight);
-    //
-    //             // calculate the position to draw the image at
-    //             const offsetX = (inputImage.naturalWidth - minLength) / 2;
-    //             const offsetY = (inputImage.naturalHeight - minLength) / 2;
-    //
-    //             // create a canvas that will present the output image
-    //             const outputImage = document.createElement('canvas');
-    //
-    //             // set it to the same size as the image
-    //             outputImage.width = size;
-    //             outputImage.height = size;
-    //
-    //             // draw our image at position 0, 0 on the canvas
-    //             const ctx = outputImage.getContext('2d');
-    //             ctx.drawImage(inputImage, offsetX, offsetY, minLength, minLength, 0, 0, size, size);
-    //             resolve(outputImage.toDataURL('image/png', 0.4));
-    //         };
-    //         // start cropping
-    //         inputImage.src = url;
-    //     })
-    // };
+    }
 
     componentDidMount() {
         const {
             fetchAllProducts,
             scrapingAllProducts,
+            gettingPopularProducts,
         } = this.props;
 
-        if (fetchAllProducts) {
-            fetchAllProducts();
+        if (gettingPopularProducts) {
+            gettingPopularProducts();
         }
 
-        if (scrapingAllProducts) {
-            scrapingAllProducts();
-        }
+        // if (fetchAllProducts) {
+        //     fetchAllProducts();
+        // }
+        //
+        // if (scrapingAllProducts) {
+        //     scrapingAllProducts();
+        // }
 
-        $("button").click(function () {
-            // $.getAttribute();
-        })
+        this.onPageClick(1);
     }
 
-    scrapingData = () => {
-        const {
-            gettingLink
-        } = this.props;
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.popularList && prevProps.popularList !== this.props.popularList) {
+            this.setState({
+                popularList: this.props.popularList,
+            })
+        }
 
-        gettingLink(this.state);
-    };
-
-    scrapingResultShow = () => {
-        const {
-            scrapingAllProducts
-        } = this.props;
-
-        scrapingAllProducts(this.state);
-    };
-
-    // scrapingDelete = () => {
-    //     const {
-    //         gettingLink,
-    //         ScrapingDelete,
-    //         scrapingAllProducts
-    //     } = this.props;
-    //     gettingLink(this.state);
-    //     ScrapingDelete(this.state);
-    //     scrapingAllProducts(this.state);
-    // };
-
-    // registerData = () => {
-    //     const {
-    //         createProduct
-    //     } = this.props;
-    //
-    //     createProduct(this.state);
-    // };
-    //
-    // productAllShow = () => {
-    //     const {
-    //         fetchAllProducts
-    //     } = this.props;
-    //
-    //     fetchAllProducts(this.state);
-    // };
+        if (this.props.pageList && prevProps.pageList !== this.props.pageList) {
+            this.setState({
+                productsList: this.props.pageList.list,
+                page_num: this.props.pageList.page_num,
+            })
+        }
+    }
 
     navigatePage = (code) => {
         if (code === 13) {
@@ -156,32 +75,53 @@ class Home extends React.Component {
             this.props.history.push(`/searchFilter`);
         }
     };
+    // registerData = () => {
+    //     const {
+    //         createProduct
+    //     } = this.props;
+    //
+    //     createProduct(this.state);
+    // };
 
-    render() {
 
-        // const {
-        //     product_photo,
-        // } = this.state;
-
-        // const {
-        //     productList,
-        // } = this.props;
+    onPageClick = (item) => {
+        this.setState({
+            current_page: item,
+        });
 
         const {
-            scrapingList
+            getProductPage
         } = this.props;
 
+        const data = {
+            current_page: item,
+            page_neighbours: this.state.page_neighbours,
+            pagination: this.state.pagination,
+        };
 
-       // const imgShow = product_photo ? product_photo : no_img;
+        if (getProductPage) {
+            getProductPage(data)
+        }
+    };
+
+    render() {
+        const pageArray = [];
+        if (this.state.page_num) {
+            for (let k = this.state.page_num.start_page; k <= this.state.page_num.end_page; k++) {
+                pageArray.push(k);
+            }
+        }
+
         return (
             <>
-                <section className="landing-header">
+                <section id="scrollSectionTop" className="landing-header">
                     <div className="w3-row min-width">
                         <div className="w3-bar">
                             <div className="w3-bar-item w3-left">
                                 <div className="w3-container">
                                     <div className="w3-dropdown-hover">
-                                        <span className=""><i className="fa fa-bars menu-size" aria-hidden="true"></i></span>
+                                        <span className=""><i className="fa fa-bars menu-size"
+                                                              aria-hidden="true"></i></span>
                                         <div className="w3-dropdown-content w3-bar-block w3-border w3-text-white">
                                             <a href="/" className="w3-bar-item w3-btn w3-hover-text-amber btnUnderLine">
                                                 <div className="w3-row">
@@ -204,7 +144,8 @@ class Home extends React.Component {
                                             <a href="/" className="w3-bar-item w3-btn w3-hover-text-amber btnUnderLine">
                                                 <div className="w3-row">
                                                     <div className="w3-col l3 m3 s3">
-                                                        <img className="offer-size" src={require('../assets/images/offers.svg')} alt="" />
+                                                        <img className="offer-size"
+                                                             src={require('../assets/images/offers.svg')} alt=""/>
                                                     </div>
                                                     <div className="w3-col l9 m9 s9">Offers</div>
                                                 </div>
@@ -225,7 +166,8 @@ class Home extends React.Component {
                                                 <div className="w3-row">
                                                     <div className="w3-col l3 m3 s3">
                                                         <img className="percent-size"
-                                                             src={require('..//assets/images/notification.svg')} alt="" />
+                                                             src={require('..//assets/images/notification.svg')}
+                                                             alt=""/>
                                                     </div>
                                                     <div className="w3-col l9 m9 s9">Notifications</div>
                                                 </div>
@@ -235,7 +177,7 @@ class Home extends React.Component {
                                                 <div className="w3-row">
                                                     <div className="w3-col l3 m3 s3">
                                                         <img className="offer-size"
-                                                             src={require('../assets/images/history.svg')} alt="" />
+                                                             src={require('../assets/images/history.svg')} alt=""/>
                                                     </div>
                                                     <div className="w3-col l9 m9 s9">History</div>
                                                 </div>
@@ -245,7 +187,7 @@ class Home extends React.Component {
                                                 <div className="w3-row">
                                                     <div className="w3-col l3 m3 s3">
                                                         <img className="percent-size"
-                                                             src={require('..//assets/images/star.svg')} alt="" />
+                                                             src={require('..//assets/images/star.svg')} alt=""/>
                                                     </div>
                                                     <div className="w3-col l9 m9 s9">Reviews</div>
                                                 </div>
@@ -257,7 +199,7 @@ class Home extends React.Component {
                                                 <div className="w3-row">
                                                     <div className="w3-col l3 m3 s3">
                                                         <img className="percent-size"
-                                                             src={require('..//assets/images/language.png')} alt="" />
+                                                             src={require('..//assets/images/language.png')} alt=""/>
                                                     </div>
                                                     <div className="w3-col l9 m9 s9">Language</div>
                                                 </div>
@@ -294,72 +236,16 @@ class Home extends React.Component {
                     </div>
                 </section>
 
+                {/*<div className="w3-btn w3-yellow w3-hover-blue" onClick={this.registerData} style={{marginTop: '40px'}}>Register</div>*/}
                 <section className="logo-search min-width">
-                    <img className="logo-size" src={require('../assets/images/E-Commerce-Software-logo.png')} alt="" />
+                    <img className="logo-size" src={require('../assets/images/E-Commerce-Software-logo.png')} alt=""/>
 
                     <div className="input-align">
                         <input className="w3-input" type="text" placeholder="Search the categories"
-                               onChange={(event) => this.setState({ categoryName: event.target.value })}
+                               onChange={(event) => this.setState({categoryName: event.target.value})}
                                onKeyUp={event => this.navigatePage(event.keyCode)}
-                               required />
+                               required/>
                     </div>
-
-                    {/*<div className="w3-btn w3-yellow w3-hover-blue" onClick={this.scrapingData} style={{marginTop: '40px'}}>Scraping Start</div>*/}
-
-                    {/*<div className="w3-btn w3-yellow w3-hover-blue" onClick={this.scrapingResultShow} style={{marginTop: '40px'}}>Scraping Result</div>*/}
-
-
-                    {/*<div className="w3-btn w3-yellow w3-hover-blue" onClick={this.scrapingDelete} style={{marginTop: '40px'}}>DB Delete</div>*/}
-
-                    {/*<div className="w3-btn w3-blue w3-hover-yellow" data-toggle="collapse" data-target="#productsInsert" style={{marginTop: '40px'}}>Insert Image</div>*/}
-                    {/*<span id="productsInsert" className="w3-row collapse">*/}
-                    {/*    <div className="w3-row w3-center">*/}
-                    {/*    <div className="w3-row" style={{paddingTop: '40px'}}>*/}
-                    {/*        <div className="w3-col l4">*/}
-                    {/*            <img src={imgShow} />*/}
-                    {/*        </div>*/}
-
-                    {/*        <div className="w3-col l8">*/}
-                    {/*            <input type="file" id="owner_picture" accept="image/*"*/}
-                    {/*                   onChange={(event) => this.selectImage(event)} required />*/}
-
-                    {/*            <input className="w3-input w3-border-blue"*/}
-                    {/*                   type="text" style={{margin: '0 auto', width: '100%', maxWidth: '50%', textAlign: 'left', marginTop: '20px', paddingLeft: '20px'}}*/}
-                    {/*                   placeholder="ID"*/}
-                    {/*                   onChange={(event) => this.setState({ product_id: event.target.value })} required />*/}
-
-                    {/*            <input className="w3-input w3-border-blue"*/}
-                    {/*                   type="text" style={{margin: '0 auto', width: '100%', maxWidth: '50%', textAlign: 'left', marginTop: '20px', paddingLeft: '20px'}}*/}
-                    {/*                   placeholder="Category"*/}
-                    {/*                   onChange={(event) => this.setState({ product_category: event.target.value })} required />*/}
-
-                    {/*            <input className="w3-input w3-border-blue"*/}
-                    {/*                   type="text" style={{margin: '0 auto', width: '100%', maxWidth: '50%', textAlign: 'left', marginTop: '20px', paddingLeft: '20px'}}*/}
-                    {/*                   placeholder="Product Name"*/}
-                    {/*                   onChange={(event) => this.setState({ product_name: event.target.value })} required />*/}
-
-                    {/*            <input className="w3-input w3-border-blue"*/}
-                    {/*                   type="text" style={{margin: '0 auto', width: '100%', maxWidth: '50%', textAlign: 'left', marginTop: '20px', paddingLeft: '20px'}}*/}
-                    {/*                   placeholder="Product Price"*/}
-                    {/*                   onChange={(event) => this.setState({ product_price: event.target.value })} required />*/}
-
-                    {/*            <input className="w3-input w3-border-blue"*/}
-                    {/*                   type="text" style={{margin: '0 auto', width: '100%', maxWidth: '50%', textAlign: 'left', marginTop: '20px', paddingLeft: '20px'}}*/}
-                    {/*                   placeholder="Product Description"*/}
-                    {/*                   onChange={(event) => this.setState({ product_description: event.target.value })} required />*/}
-
-                    {/*            <input className="w3-input w3-border-blue"*/}
-                    {/*                   type="text" style={{margin: '0 auto', width: '100%', maxWidth: '50%', textAlign: 'left', marginTop: '20px', paddingLeft: '20px'}}*/}
-                    {/*                   placeholder="Product Store Address"*/}
-                    {/*                   onChange={(event) => this.setState({ product_store_address: event.target.value })} required />*/}
-
-                    {/*            <div className="w3-btn w3-yellow w3-hover-blue" onClick={this.registerData} style={{marginTop: '40px'}}>Register</div>*/}
-
-                    {/*            <div className="w3-btn w3-yellow w3-hover-blue" onClick={this.productAllShow} style={{marginTop: '40px'}}>Show</div>*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
-                    {/*</span>*/}
                 </section>
 
                 <section className="featured-products min-width">
@@ -375,81 +261,105 @@ class Home extends React.Component {
                                      margin={4}
                                      autoplay={true}
                         >
-
                             <div className="flex-card">
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1542352705/N14773385A_M2.jpg'} alt="" />
-                                    <div className="blue-txt">FC Bayern Pre Match Jersey Collegiate Navy/White</div>
-                                    <div className="red-txt">SAR 140</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1585904841/N32868797V_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Royal Complete 3.0 Sneakers</div>
+                                    <div className="red-txt">SAR 192</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1562821028/N25889578V_1.jpg'} alt="" />
-                                    <div className="blue-txt">Boot League Short Sleeve T-Shirt Black/Collegiate Navy/Active Teal/White</div>
-                                    <div className="red-txt">SAR 97</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1566937648/N29220476A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Women's Corral Watch RB-0193
+                                    </div>
+                                    <div className="red-txt">SAR 227.7</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1586153040/N29872531V_1.jpg'} alt="" />
-                                    <div className="blue-txt">Sportswear Remix T-Shirt Black</div>
-                                    <div className="red-txt">SAR 83</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1585918018/N32869624V_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Royal Complete 3.0 Sneakers</div>
+                                    <div className="red-txt">SAR 192</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1589521994/N34111287V_1.jpg'} alt="" />
-                                    <div className="blue-txt">Moments Basketball T-Shirt Light Blue</div>
-                                    <div className="red-txt">SAR 143</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1585594362/N29023143V_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Pump Supreme Running Shoes</div>
+                                    <div className="red-txt">SAR 262</div>
                                 </div>
                             </div>
 
 
                             <div className="flex-card">
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1572184233/N31243714V_1.jpg'} alt="" />
-                                    <div className="blue-txt">Star Chevron T-Shirt Red</div>
-                                    <div className="red-txt">SAR 97</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1578638783/N33649173A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">The Book Of Unwritten Tales 2 - Xbox One - Adventure - Xbox One</div>
+                                    <div className="red-txt">SAR 97.9</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1572326301/N31288604V_1.jpg'} alt="" />
-                                    <div className="blue-txt">Felix Graphic T-Shirt white</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1581668866/N34313828A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Hellblade Senuas Sacrifice - Adventure - Xbox One</div>
                                     <div className="red-txt">SAR 148</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1589521985/N34111232V_1.jpg'} alt="" />
-                                    <div className="blue-txt">Baseline Buckets Basketball T-Shirt Black</div>
-                                    <div className="red-txt">SAR 119</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1535547595/N16659380A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Styx: Shards Of Darkness - Adventure - Xbox One - Adventure - Xbox One</div>
+                                    <div className="red-txt">SAR 249</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1585594405/N29872238V_1.jpg'} alt="" />
-                                    <div className="blue-txt">Dri-FIT Humor T-Shirt Black/White</div>
-                                    <div className="red-txt">SAR 81</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1509969266/N12700351A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Ben 10 (Intl Version) - Adventure - Xbox One</div>
+                                    <div className="red-txt">SAR 199</div>
                                 </div>
                             </div>
 
                             <div className="flex-card">
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1589715672/N11292764A_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1589715672/N11292764A_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">Skin Refining Clear-Up Strips</div>
                                     <div className="red-txt">SAR 19</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1513172074/N12874978A_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1513172074/N12874978A_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">Body And Face Scrubbing Cream 500ml</div>
                                     <div className="red-txt">SAR 45</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1557487643/N15658822A_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1557487643/N15658822A_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">Vitamin E Oil Clear 75ml</div>
                                     <div className="red-txt">SAR 17.2</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1583837534/N29905109A_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1583837534/N29905109A_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">Facial Serum Vitamin C 30ml</div>
                                     <div className="red-txt">SAR 19</div>
                                 </div>
@@ -458,25 +368,34 @@ class Home extends React.Component {
 
                             <div className="flex-card">
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1525757135/N13714689A_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1525757135/N13714689A_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">Multipurpose Foldable Table White 74centimeter</div>
                                     <div className="red-txt">SAR 89</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1556468124/N24214884A_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1556468124/N24214884A_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">9-Layer Shoe Rack Grey/Black 60x108x30centimeter</div>
                                     <div className="red-txt">SAR 158</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1522418998/N14004197A_1.jpg'} alt="" />
-                                    <div className="blue-txt">Inflatable Pull Out Sofa Bed Black 221x66x193centimeter</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1522418998/N14004197A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Inflatable Pull Out Sofa Bed Black 221x66x193centimeter
+                                    </div>
                                     <div className="red-txt">SAR 359</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1556468124/N24214879A_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1556468124/N24214879A_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">12-Layer Shoe Rack Black/White 118x120x30centimeter</div>
                                     <div className="red-txt">SAR 140</div>
                                 </div>
@@ -485,26 +404,36 @@ class Home extends React.Component {
 
                             <div className="flex-card">
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1590059570/N37750239V_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1590059570/N37750239V_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">Smash V2 Max</div>
                                     <div className="red-txt">SAR 223</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1590562286/N38379738V_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1590562286/N38379738V_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">Pack of 9 Sensitive Baby Wipes, 540 Counts</div>
-                                    <div className="red-txt">SAR </div>
+                                    <div className="red-txt">SAR</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1589996076/N35699194V_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1589996076/N35699194V_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">Bountiful Quick Path Sports Shoes</div>
                                     <div className="red-txt">SAR 212</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1536065876/N16898584A_1.jpg'} alt="" />
-                                    <div className="blue-txt">6-Piece Compressed Two-Sided Comforter Set Microfibre Dark Purple King</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1536065876/N16898584A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">6-Piece Compressed Two-Sided Comforter Set Microfibre Dark
+                                        Purple King
+                                    </div>
                                     <div className="red-txt">SAR 144.85</div>
                                 </div>
                             </div>
@@ -512,60 +441,80 @@ class Home extends React.Component {
 
                             <div className="flex-card">
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1572867966/N31073554A_1.jpg'} alt="" />
-                                    <div className="blue-txt">Printed Flat Bedsheet Set Cotton Blend Multicolour Double</div>
-                                    <div className="red-txt">SAR 32</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1571728731/N30883728V_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Suede Belt 56Navy
+                                    </div>
+                                    <div className="red-txt">SAR 60.25</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1569584309/N30384324A_1.jpg'} alt="" />
-                                    <div className="blue-txt">3-Piece Compressed Single Size Comforter Set Microfibre Pink</div>
-                                    <div className="red-txt">SAR 34</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1569584309/N30384324A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">https://k.nooncdn.com/t_desktop-pdp-v1/v1574581610/N29808152A_1.jpg
+                                    </div>
+                                    <div className="red-txt">SAR 23.5</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1582650388/N23010459A_1.jpg'} alt="" />
-                                    <div className="blue-txt">6-Piece Platinum Plus Printed Bedsheet Set Cotton Blend Multicolor 229X254centimeter</div>
-                                    <div className="red-txt">SAR 58</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1574581598/N29808137A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Spacious Leather Wallet
+                                    </div>
+                                    <div className="red-txt">SAR 28</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1554838769/N23114850A_1.jpg'} alt="" />
-                                    <div className="blue-txt">Modern Home Painted Linen Pillowcase Linen White/Yellow</div>
-                                    <div className="red-txt">SAR 9.95</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1588675025/N29808140A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Spacious Leather Wallet
+                                    </div>
+                                    <div className="red-txt">SAR 28.5</div>
                                 </div>
                             </div>
 
 
                             <div className="flex-card">
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1589526624/N37107396V_1.jpg'} alt="" />
-                                    <div className="blue-txt">Breathe Run T-Shirt Black</div>
-                                    <div className="red-txt">SAR 115</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1530517723/N15481308A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Pair Of Shirt Holder Black</div>
+                                    <div className="red-txt">SAR 42</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1578908718/N32735043V_1.jpg'} alt="" />
-                                    <div className="blue-txt">Rebel Block Sweatpants Grey</div>
-                                    <div className="red-txt">SAR 230</div>
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1574581605/N29808146A_1.jpg'}
+                                         alt=""/>
+                                    <div className="blue-txt">Spacious Leather Wallet</div>
+                                    <div className="red-txt">SAR 19.5</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1589526627/N37107421V_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1581426640/N25507521A_1.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">Breath Run Tank Top Black</div>
-                                    <div className="red-txt">SAR 104</div>
+                                    <div className="red-txt">SAR 39</div>
                                 </div>
 
                                 <div className="card-bg-slider">
-                                    <img className="img-item" src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1589521998/N34111313V_1.jpg'} alt="" />
+                                    <img className="img-item"
+                                         src={'https://k.nooncdn.com/t_desktop-pdp-v1/v1568185890/N29801020A_2.jpg'}
+                                         alt=""/>
                                     <div className="blue-txt">Charged Cotton Training T-Shirt Light Blue</div>
-                                    <div className="red-txt">SAR 135</div>
+                                    <div className="red-txt">SAR 34</div>
                                 </div>
                             </div>
                         </OwlCarousel>
                     </div>
 
-                    <div className="w3-row w3-right see-all show-more">See All</div>
+                    <a href="#scrollSectionBottom" className="w3-row w3-right see-all show-more">See All</a>
                 </section>
 
                 <section className="most-popular-product min-width">
@@ -575,48 +524,103 @@ class Home extends React.Component {
 
                     <div className="flex-card">
                         {
-                            scrapingList && scrapingList.map((item, key) => {
-                                 if ((key < 8) && (typeof (item.scraping_price) !== "undefined")) {
+                            this.state.popularList && this.state.popularList.map((item, key) => {
+                                if (typeof (item.scraping_price) !== "undefined") {
                                     return (
-                                        <div className="w3-card card-bg-padding">
-                                            <a href={item.scraping_store_address}><img className="img-item" key={key} src={item.scraping_photo_link} alt="" /></a>
-                                            <div className="scraping-name text-nowrap">{item.scraping_name}</div>
-                                            <div className="blue-txt text-nowrap">{item.scraping_description}</div>
-                                            <div className="red-txt">SAR {item.scraping_price}</div>
-                                        </div>
-                                    )
-                                 } else {
-                                     return true;
-                                 }
-                            })
-                        }
-                    </div>
-
-                    <span id="productsSeeAll" className="w3-row collapse">
-                        <div className="flex-card">
-                        {
-                            scrapingList && scrapingList.map((item, key) => {
-                                if ((key >= 8) && (typeof (item.scraping_price) !== "undefined")){
-                                    return (
-                                        <div className="w3-card card-bg-padding">
-                                            <a href={item.scraping_store_address}><img className="img-item" key={key} src={item.scraping_photo_link} alt="" /></a>
+                                        <div className="w3-card card-bg-padding" key={key}>
+                                            <a href={item.scraping_store_address}><img className="img-item" key={key}
+                                                                                       src={item.scraping_photo_link}
+                                                                                       alt=""/></a>
                                             <div className="scraping-name text-nowrap">{item.scraping_name}</div>
                                             <div className="blue-txt text-nowrap">{item.scraping_description}</div>
                                             <div className="red-txt">SAR {item.scraping_price}</div>
                                         </div>
                                     )
                                 } else {
-                                    return true;
+                                    return null;
+                                }
+                            })
+                        }
+                    </div>
+
+                    <span id="productsSeeAll" className="w3-row collapse">
+                        <div className="w3-row products-title" style={{paddingTop: 50}}>
+                            All Products <span
+                            style={{fontSize: 20}}>(The total pages - {this.state.page_num && this.state.page_num.total_page})</span>
+                        </div>
+                        <div className="flex-card">
+                        {
+                            this.state.productsList && this.state.productsList.map((item, key) => {
+                                if (typeof (item.scraping_price) !== "undefined") {
+                                    return (
+                                        <div className="w3-card card-bg-padding">
+                                            <a href={item.scraping_store_address}><img className="img-item" key={key}
+                                                                                       src={item.scraping_photo_link}
+                                                                                       alt=""/></a>
+                                            <div className="scraping-name text-nowrap">{item.scraping_name}</div>
+                                            <div className="blue-txt text-nowrap">{item.scraping_description}</div>
+                                            <div className="red-txt">SAR {item.scraping_price}</div>
+                                        </div>
+                                    )
+                                } else {
+                                    return null;
                                 }
                             })
                         }
                         </div>
+
+                        <div className="justify-btn" style={{paddingTop: 30, paddingBottom: 40}}>
+                            <div className="product-btn justify-center" onClick={() => this.onPageClick(1)}>
+                                <img className="icon-size"
+                                     src={require("../assets/images/back.png")} alt=""/>
+                            </div>
+
+                             <div
+                                 className="product-btn justify-center txt-14"
+                                 onClick={() => this.onPageClick(this.state.current_page > 1 ? this.state.current_page - 1 : this.state.page_num.total_page)}
+                             >
+                                Prev
+                            </div>
+
+                            {
+                                this.state.page_num && pageArray && pageArray.map((item, key) => {
+                                    return (
+                                        <div
+                                            className={this.state.current_page && this.state.current_page === item ? "product-btn justify-center btn-search" : "product-btn justify-center col-darkBlue"}
+                                            key={key}
+                                            onClick={() => this.onPageClick(item)}
+                                        >
+                                            {item}
+                                        </div>
+                                    )
+                                })
+                            }
+
+                            <div
+                                className="product-btn justify-center txt-14"
+                                onClick={() => this.onPageClick(this.state.current_page < this.state.page_num.total_page ? this.state.current_page + 1 : 1)}
+                            >
+                                Next
+                            </div>
+
+                            <div className="product-btn justify-center" onClick={() => this.onPageClick(this.state.page_num.total_page)}>
+                                <img className="icon-size"
+                                     src={require("../assets/images/next.png")} alt=""/>
+                            </div>
+                        </div>
                     </span>
 
-                    <div className="w3-row w3-right see-all" data-toggle="collapse" data-target="#productsSeeAll">
-                       See All
+                    <div id="scrollSectionBottom" className="w3-row w3-right see-all" data-toggle="collapse"
+                         data-target="#productsSeeAll">
+                        See All
                     </div>
                 </section>
+
+                <a href="#scrollSectionTop" className="scrollPosition1"><img
+                    className="upDownSize" src={require('../assets/images/up-arrow.svg')} alt=""/></a>
+                <br/><br/>
+                <a href="#scrollSectionBottom" className="scrollPosition2"><img
+                    className="upDownSize" src={require('../assets/images/down-arrow.svg')} alt=""/></a>
 
                 <section className="landing-footer">
                     <div className="">All prices are in USD</div>
@@ -628,18 +632,20 @@ class Home extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        // productList: state.filter.productList,
-        scrapingList: state.scrapingProduct.scrapingList
+        popularList: state.scrapingProduct.popularList,
+        scrapingList: state.scrapingProduct.scrapingList,
+        pageList: state.scrapingProduct.pageList,
+
     }
 };
 
 export default connect(
     mapStateToProps,
     {
-        createProduct,
         fetchAllProducts,
         scrapingAllProducts,
-        gettingLink,
-        // ScrapingDelete,ScrapingDelete,
+        gettingPopularProducts,
+
+        getProductPage,
     }
 )(Home);

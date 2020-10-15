@@ -4,13 +4,17 @@ import {
     SCRAPING_FORM_API,
     SCRAPING_PRODUCT_ALL,
     SET_SCRAPING_SORT_PRODUCT,
+    POPULAR_PRODUCT,
+    PAGE_PRODUCT,
 } from "../actions/types/types"
 
 const initialState = {
     product: {},
     productList: [],
     scrapingProduct: [],
-    scrapingProductList: []
+    scrapingProductList: [],
+    popularList: '',
+    pageList: '',
 };
 
 export default function (state = initialState, action) {
@@ -44,11 +48,19 @@ export default function (state = initialState, action) {
                 scrapingSortList: action.payload
             };
 
-        // case SET_SCRAPING_DELETE:
-        //     return {
-        //         ...state,
-        //         scrapingList: action.payload
-        //     };
+        case POPULAR_PRODUCT:
+            return {
+                ...state,
+                popularList: action.payload
+            };
+
+        case PAGE_PRODUCT:
+            return {
+                ...state,
+                pageList: action.payload,
+            };
+
+
         default:
             return state;
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from "react-redux";
-import {fetchAllProducts} from "../redux/actions/filter/filter";
+// import {fetchAllProducts} from "../redux/actions/filter/filter";
 
 import {
     scrapingAllProducts,
@@ -33,8 +33,8 @@ class Home extends React.Component {
 
     componentDidMount() {
         const {
-            fetchAllProducts,
-            scrapingAllProducts,
+            // fetchAllProducts,
+            // scrapingAllProducts,
             gettingPopularProducts,
         } = this.props;
 
@@ -635,14 +635,13 @@ const mapStateToProps = (state) => {
         popularList: state.scrapingProduct.popularList,
         scrapingList: state.scrapingProduct.scrapingList,
         pageList: state.scrapingProduct.pageList,
-
     }
 };
 
 export default connect(
     mapStateToProps,
     {
-        fetchAllProducts,
+        // fetchAllProducts,
         scrapingAllProducts,
         gettingPopularProducts,
 

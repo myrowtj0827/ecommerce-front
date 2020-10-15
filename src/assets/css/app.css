@@ -498,7 +498,7 @@ color: white !important;
 
 .owl-theme .owl-dots .owl-dot span {
   position: relative;
-  margin: 15px;
+  margin: 0;
 }
 
 .owl-carousel .owl-nav button.owl-next,
